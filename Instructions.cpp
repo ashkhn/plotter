@@ -1,8 +1,6 @@
 /*
 Input file is black and white sketch through command line
 output is instructions for servos
-Uncomment lines 246 and 251 to see that pen up and pen down instructions are properly executed
-Uncomment line 267 to see the visited array being updated
 */
 
 #include <iostream>
@@ -54,39 +52,46 @@ void print(matrix <T> a){
     cout<<endl;
   }
 }
+template <class T>
+void printVector(std::vector<T> a){
+  for(int i=0;i<a.size();i++){
+    cout<<a[i]<<endl;
+    }
+  }
+
 Point firstCord(matrix<double> a){
   for(int i=0;i<a.size1();i++){
     for(int j=0;j<a.size2();j++){
       if(a(i,j)!=-1){
-	Point first (i,j);
-	return first;
+  Point first (i,j);
+  return first;
       }
     }
   }
 }
 Point nextCord(Point a,matrix<double>b){
   for(int j=a.y;j<b.size2();j++){
-    if(b(a.x,j)!=-1&&j!=a.y){	
-	Point next (a.x,j);
-	return next;
+    if(b(a.x,j)!=-1&&j!=a.y){ 
+  Point next (a.x,j);
+  return next;
       }
     else {continue;}
   }
   if(a.x!=b.size1()-1){
     for(int i=(a.x)+1;i<b.size1();i++){
       for(int j=0;j<b.size2();j++){
-	if(b(i,j)!=-1){
-	  Point next (i,j);
-	  return next;
-	}
+  if(b(i,j)!=-1){
+    Point next (i,j);
+    return next;
+  }
       }
     }
   }
   else{ 
     for(int j=0;j<b.size2();j++){
-      if(b(a.x,j)!=-1&&j!=a.y){	
-	Point next (a.x,j);
-	return next;
+      if(b(a.x,j)!=-1&&j!=a.y){ 
+  Point next (a.x,j);
+  return next;
       }
       else {continue;}
     }
@@ -151,7 +156,7 @@ bool isClose(Point a,Point b){ //returns true if Points in neighborhood of one p
 }
 
  main(int argc,char* argv[]){
-	 BMFH bmfh = GetBMFH(argv[1]);
+   BMFH bmfh = GetBMFH(argv[1]);
   if (bmfh.bfType != BMP::BMP_FILE_TYPE) { return -1; }  //Check if input is valid bmp file
   BMP inImage;
   inImage.ReadFromFile(argv[1]);       //Input Image (After Edge Detection)
@@ -178,23 +183,23 @@ bool isClose(Point a,Point b){ //returns true if Points in neighborhood of one p
   }// Initialize to illegal value
 
   for(int i=0; i<width; i++){
-	for (int j=0; j<height; j++){
-		RGBApixel temp=inImage.GetPixel(i,j);
-		if(temp.Red==0 && temp.Green==0 && temp.Blue==0) {     
-		  double x= (i==width-1)?(k*(i+1))-30:(k*i)-30;          //x cord on paper in cm
-		  double y= (j==height-1)?30-(k*(j+1)):30-(k*j);          //y cord on paper in cm
-		  double slope=double(y+dist)/double(-x+dist);
-		  double phi=atan(slope);
-		  double radius=sqrt(double(sqr(x-dist)+sqr(y+dist)));
-		  alpha(i,j)=radtodeg(acos((sqrArmLength1+sqrArmLength2-sqr(radius))/(2*armLength1*armLength2)));  //cos rule to find angle alpha; 
-		   double thetaphi=acos(((sqrArmLength1+sqr(radius)-sqrArmLength2)/(2*armLength1*radius)));//cos rule to find theta-phi
-		   theta(i,j)=90-radtodeg(thetaphi- phi);
-		  // cout<<"phi is "<< phi<<endl;
-		   // cout<<"radius for "<<"("<<i<<","<<j<<") is "<<radius<<endl;
-		    //cout<<"x is "<<x<<"y is"<<y<<endl;
-		  }//end if
-		
-	}
+  for (int j=0; j<height; j++){
+    RGBApixel temp=inImage.GetPixel(i,j);
+    if(temp.Red==0 && temp.Green==0 && temp.Blue==0) {     
+      double x= (i==width-1)?(k*(i+1))-30:(k*i)-30;          //x cord on paper in cm
+      double y= (j==height-1)?30-(k*(j+1)):30-(k*j);          //y cord on paper in cm
+      double slope=double(y+dist)/double(-x+dist);
+      double phi=atan(slope);
+      double radius=sqrt(double(sqr(x-dist)+sqr(y+dist)));
+      alpha(i,j)=radtodeg(acos((sqrArmLength1+sqrArmLength2-sqr(radius))/(2*armLength1*armLength2)));  //cos rule to find angle alpha; 
+       double thetaphi=acos(((sqrArmLength1+sqr(radius)-sqrArmLength2)/(2*armLength1*radius)));//cos rule to find theta-phi
+       theta(i,j)=90-radtodeg(thetaphi- phi);
+      // cout<<"phi is "<< phi<<endl;
+       // cout<<"radius for "<<"("<<i<<","<<j<<") is "<<radius<<endl;
+        //cout<<"x is "<<x<<"y is"<<y<<endl;
+      }//end if
+    
+  }
   }
   Point first = firstCord(theta);
  
@@ -208,28 +213,28 @@ bool isClose(Point a,Point b){ //returns true if Points in neighborhood of one p
   for(int i=0;i<width;i++){
     for(int j=0;j<height;j++){
        if(theta(i,j)!=-1){
-	 count++;
-	 int intgr1=floor(alpha(i,j));
-	 int intgr2= floor(theta(i,j));
-	 double frctn1=alpha(i,j)-intgr1;
-	 double frctn2=theta(i,j)-intgr2;
-	 if(frctn1>=0.5){
-	   alpha(i,j)=intgr1+1;
-	   	     motor1.push_back(alpha(i,j));
-	 }
-	 else{
-	   alpha(i,j)=intgr1;
-	   motor1.push_back(alpha(i,j));}
-	 //cout<<"alpha ("<<i<<","<<j<<")="<<alpha(i,j)<<endl;
+   count++;
+   int intgr1=floor(alpha(i,j));
+   int intgr2= floor(theta(i,j));
+   double frctn1=alpha(i,j)-intgr1;
+   double frctn2=theta(i,j)-intgr2;
+   if(frctn1>=0.5){
+     alpha(i,j)=intgr1+1;
+           motor1.push_back(alpha(i,j));
+   }
+   else{
+     alpha(i,j)=intgr1;
+     motor1.push_back(alpha(i,j));}
+  // cout<<"alpha ("<<i<<","<<j<<")="<<alpha(i,j)<<endl;
        
-	 if(frctn2>=0.5){
-	   theta(i,j)=intgr2+1;
-	   motor2.push_back(theta(i,j));
-	 }
-	 else{
-	   theta(i,j)=intgr2;
-	 motor2.push_back(theta(i,j)); }
-	//  cout<<"theta ("<<i<<","<<j<<")="<<theta(i,j)<<endl;
+   if(frctn2>=0.5){
+     theta(i,j)=intgr2+1;
+     motor2.push_back(theta(i,j));
+   }
+   else{
+     theta(i,j)=intgr2;
+   motor2.push_back(theta(i,j)); }
+    //cout<<"theta ("<<i<<","<<j<<")="<<theta(i,j)<<endl;
        }
     }  
   }
@@ -242,7 +247,7 @@ bool isClose(Point a,Point b){ //returns true if Points in neighborhood of one p
   for(int i=0;i<count;i++){
 
     if(isClose(next,next2)){//pen down
-  	  //move to next position
+      //move to next position
        visited(next.x,next.y)=1;
       // cout<<"pen down "<<endl;
     }
@@ -251,7 +256,7 @@ bool isClose(Point a,Point b){ //returns true if Points in neighborhood of one p
        visited(next.x,next.y)=1;
      //  cout<<"pen up "<<endl;
     }
-  cout<< "next is ("<< next.x<<", "<<next.y<<")"<<endl;
+  //cout<< "next is ("<< next.x<<", "<<next.y<<")"<<endl;
     next=nextCord(next,theta);
     next2=nextCord(next2,theta);
   }
@@ -263,13 +268,40 @@ bool isClose(Point a,Point b){ //returns true if Points in neighborhood of one p
   for(int i=0;i<width;i++){
     for(int j=0;j<height;j++){
        if(visited(i,j)==1){
-  	 count2++;
-  	// cout<<"visited ("<<i<<","<<j<<")="<<visited(i,j)<<endl;
-  	 outImage.SetPixel(i,j,black);
+     count2++;
+    // cout<<"visited ("<<i<<","<<j<<")="<<visited(i,j)<<endl;
+     outImage.SetPixel(i,j,black);
        }
     }
-  }	 
+  }  
   cout<< count2<<endl;
 //  outImage.WriteToFile(argv[2]);
   cout<<"motor 1 "<<motor1.size()<<endl;
+  cout<<"#include <Servo.h>"<<endl;
+  cout<<"Servo servo1;"<<endl;
+  cout<<"Servo servo2;"<<endl;
+  cout<<"void setup(){"<<endl;
+  cout<<"servo1.attach(9);"<<endl;
+  cout<<"servo2.attach(11);"<<endl;
+  cout<<"}"<<endl;
+  cout<<"void loop(){"<<endl;
+  cout<<"int motor1["<<motor1.size()<<"]"<<endl;
+  cout<<"int motor2["<<motor2.size()<<"]"<<endl;
+ for(int i =0;i<motor1.size();i++){
+  cout<<"motor1["<<i<<"]="<<motor1[i]<<";"<<endl;
+ }
+    /* code */
+    cout<<"for (int i = 0; i <"<<motor1.size()<<"; ++i){"<<endl;
+      /* code */
+    cout<<"servo1.write(motor1[i]);"<<endl;
+  cout<<"}"<<endl;
+   for(int i =0;i<motor2.size();i++){
+  cout<<"motor2["<<i<<"]="<<motor2[i]<<";"<<endl;
+ }
+    /* code */
+    cout<<"for (int i = 0; i <"<<motor2.size()<<"; ++i){"<<endl;
+      /* code */
+    cout<<"servo2.write(motor2[i]);"<<endl;
+  cout<<"}"<<endl;
+
  }
